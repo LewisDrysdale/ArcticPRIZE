@@ -1,0 +1,5 @@
+# ignore all data
+/data
+
+#ignore all plots
+/plots
