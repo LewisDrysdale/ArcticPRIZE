@@ -1,14 +1,71 @@
 % Quick plots of PRIZE 2017-18 moorings data
 % ESDU, Sep 18
+% edited by Lewis, FEB 2021
 
 clear; close all;
-%addpath C:\Code\Matlab\Various
-addpath C:\MATLAB\nansuite
 
-%% EAST
+%% set directories and gridding parameters
+data_dir = 'C:\Users\sa01ld\Desktop\PRIZE_18_19\data\moor_processed'
+plot_dir = 'C:\Users\sa01ld\Desktop\PRIZE_18_19\plots';
+% data are sampled at 2 hour intervals, SBE16, 6 min, Star-Odi, 12 mins,
+% SBE 37
 
-load('EAST_18.mat');
+%% GRID EAST
+t_interp    = 1/2; % every 6 hours
+z_iterp     = 2;   % every 2 metres
+start_date  = datenum('21-June-2018');
+end_date    = datenum('17-Nov-2019');
+t_grid = start_date:t_interp:end_date;
+y_tol       = [-10 10];    % deviation in PSU allowed by depsike routine
+stddy_tol    = 4;           % tolerance range of differences between adjacent values of y
+nloop        = 5;           % despike loop number
 
+% initialise empty arrays for grid
+T=[];S=[];PRES_T=[];PRES_S=[];
+
+% load data structure
+load([data_dir filesep 'EAST_18.mat']);
+
+for ii=1:numel(prize_east_18)
+    
+    % extract data to workspace variables
+    temp    =prize_east_18(ii).temp;
+    sal     =prize_east_18(ii).sal;
+    pres    =prize_east_18(ii).pres;
+    time    =prize_east_18(ii).time;
+    
+    %   Try despike salinity, replace bad values with NAN - SBE only!
+    if ~isempty(sal)    
+        [sal,dx,~] = ddspike(sal,y_tol,stddy_tol,[nloop],'y',NaN);
+        
+        % Replace contemperaneous temperatures with NAN
+        temp(dx)         = NaN;
+        
+        % save de-spike plots
+        ylabel('Salinity');
+        title(['intrument sn ' num2str(prize_east_18(ii).sn)]);
+        savename=[plot_dir filesep 'east_18/despike_instrumentsn ' num2str(prize_east_18(ii).sn)];
+        print(gcf,'-dpng',savename);       
+        
+        % interpolate salinity data
+        S=[S;interp1(time, sal, t_grid)];
+        PRES_S=[PRES_S;interp1(time, pres, t_grid)];
+    else
+        % Star-Odi data, has tempertaure only
+        % interpolate temp, no despike
+        T=[T;interp1(time, temp, t_grid)];
+        PRES_T=[PRES_T; repmat(pres,1,numel(t_grid))];
+    end
+
+end
+
+% low-pass filter the data
+
+
+% interpolate depth grid
+
+
+%%
 % Average data bi-hourly (note: using start and end time ajusted even hours)
 binsize_x = 1/12;
 interp_time = [start_date:binsize_x:end_date];
