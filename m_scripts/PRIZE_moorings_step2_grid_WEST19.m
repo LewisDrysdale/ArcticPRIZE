@@ -1,11 +1,8 @@
 % Quick plots of PRIZE 2017-18 moorings data
 % ESDU, Sep 18
+% Edited by Lewis Feb 21
 
 clear; close all;
-%addpath C:\Code\Matlab\Various
-addpath C:\MATLAB\nansuite
-
-
 
 %% WEST
 
@@ -14,6 +11,7 @@ load('WEST_18.mat');
 % Average data bi-hourly (note: using start and end time ajusted even hours)
 binsize_x = 1/12;
 interp_time = [start_date:binsize_x:end_date];
+
 % Later on interpolate every 2 meters
 binsize_y = 2;
 if mod(waterdepth,2)==0 % even number
@@ -22,7 +20,6 @@ else
     wd = waterdepth+1;
 end    
 interp_depth = [0:binsize_y:wd];
-
 
 %% Temperature grid
 
