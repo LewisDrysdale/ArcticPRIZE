@@ -7,11 +7,82 @@ outdir  =('C:\Users\sa01ld\Desktop\PRIZE_18_19\data\moor_processed');
 indir   =('C:\Users\sa01ld\Desktop\PRIZE_18_19\data\moor_raw');
 
 %% MOORING PARAMS 
-mooring_id='WEST_18';
+mooring_id='WEST_17';
 % mooring_id='EAST_18';
-% mooring_id='EAST_19';
 
-if strcmpi(mooring_id,'WEST_18')==1
+if strcmpi(mooring_id,'WEST_17')==1
+    % set mooring parameters here
+    start_date=datenum('23-Sep-2017 12:30:00');
+    end_date=datenum('14-Jun-2018 05:00:00'); 
+    waterdepth = 233; %TBC 255 ctd033 228
+
+
+    inst_list = [50214,4196,4197,4198,4199,4200,9384,4201,9385,9386,9387,4216,4218,4220];
+    inst_depth_list = [21,27,31,41,51,61,75,88,96,112,162,222,137,187,212];
+    WEST_SBE16_SN = [50214];
+    WEST_SBE37_SN = [9384,9385,9386,9387];
+    WEST_SO_SN = [4196,4197,41981,4199,4200,4201,4215,4216,4218,4220];
+    
+    for j=1:length(inst_list)
+        if ismember(inst_list(j),WEST_SBE37_SN)
+           fl = [indir filesep '2017/west' filesep 'SBE37SM-RS232_0370' num2str(inst_list(j)) '_2018_06_14postcal.cnv'];
+            [timeJ,scan,pres,temp,cond,depth,sal,dens,flag]=textread(fl,...
+                '%f%f%f%f%f%f%f%f%f','headerlines',300);
+            % Select in-water data only
+            mtime=datenum('31-Dec-2016 00:00:00')+timeJ;
+            ind=find(mtime>=start_date & mtime<=end_date);
+
+            prize_west_17(j).inst='SBE-37';
+            prize_west_17(j).sn=inst_list(j);
+            prize_west_17(j).time=mtime(ind);
+            prize_west_17(j).pres=pres(ind);
+            prize_west_17(j).temp=temp(ind);
+            prize_west_17(j).cond=cond(ind);
+            prize_west_17(j).sal=sal(ind);
+            prize_west_17(j).dens=dens(ind);
+            clear scan timeJ pres temp cond depth sal dens flag mtime ind sn fl   
+        elseif ismember(inst_list(j),WEST_SBE16_SN) % sbe16
+             fl = [indir filesep '2017/west' filesep 'SBE16plus_016' num2str(inst_list(j)) '_2018_06_15.cnv'];
+            [scan,timeJ,pres,temp,cond,depth,sal,dens,fluo,par,flag]=textread(fl,...
+                 '%f%f%f%f%f%f%f%f%f%f%f','headerlines',501);
+            % Select in-water data only
+            mtime=datenum('31-Dec-2016 00:00:00')+timeJ;
+            ind=find(mtime>=start_date & mtime<=end_date);
+            prize_west_17(j).inst='SBE-16';
+            prize_west_17(j).sn=inst_list(j);
+            prize_west_17(j).time=mtime(ind);
+            prize_west_17(j).pres=pres(ind);
+            prize_west_17(j).temp=temp(ind);
+            prize_west_17(j).cond=cond(ind);
+            prize_west_17(j).sal=sal(ind);
+            prize_west_17(j).dens=dens(ind);            
+            prize_west_17(j).fluo=fluo(ind);
+            prize_west_17(j).par=par(ind);
+            clear scan timeJ pres temp cond depth sal dens flag mtime ind sn fl
+        else
+            fl = [indir filesep '2017/west' filesep '3T' num2str(inst_list(j)) '.DAT'];
+            [scan,datetime,T]=textread(fl,'%f%19c%s','delimiter',' ','headerlines',13);
+            for ii=1:numel(T)
+                split_temp=split(T(ii),',');
+                newtempstr=[char(split_temp(1)) '.' char(split_temp(2))];
+                temp(ii)=str2double(newtempstr);
+            end
+            
+            mtime=datenum(datetime,'dd.mm.yyyy HH:MM:SS');
+            ind=find(mtime>=start_date & mtime<=end_date);
+            prize_west_17(j).inst='Star-Odi';
+            prize_west_17(j).sn=inst_list(j);
+            prize_west_17(j).time=mtime(ind);
+            prize_west_17(j).temp=temp(ind);
+            prize_west_17(j).pres=inst_depth_list(j);
+            
+            clear scan datetime temp mtime ind sn fl
+         end
+    end
+
+    save([outdir filesep mooring_id '.mat'],'prize_west_17')
+    
+elseif strcmpi(mooring_id,'WEST_18')==1    
     % set mooring parameters here
     start_date=datenum('22-Jun-2018 12:30:00');
     end_date=datenum('25-Nov-2019 05:00:00'); 
@@ -21,9 +92,10 @@ if strcmpi(mooring_id,'WEST_18')==1
     WEST_SBE37_SN = [9382,9395,7294,7295,9396];
     WEST_SO_SN = [4196,4197,4198,4199,4200,4201,4216,4218,4220,4302];
     
-    %% Read data into stucture
     for j=1:length(inst_list)
-         if ismember(inst_list(j),WEST_SBE37_SN)
+
+    
+    if ismember(inst_list(j),WEST_SBE37_SN)
                     fl = [indir filesep '2018' filesep 'WEST18_SBE37_' num2str(inst_list(j)) '.cnv'];
             [scan,timeJ,pres,temp,cond,depth,sal,dens,flag]=textread(fl,...
                 '%f%f%f%f%f%f%f%f%f','headerlines',300);
