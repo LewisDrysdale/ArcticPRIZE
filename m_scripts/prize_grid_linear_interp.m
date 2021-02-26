@@ -14,7 +14,7 @@ for ii=1:numel(structure)
     sal     =structure(ii).sal;
     pres    =structure(ii).pres;
     time    =structure(ii).time;
-    
+        
     %   Try despike salinity, replace bad values with NAN - SBE only!
     if ~isempty(sal)    
         [sal,dx,~] = ddspike(sal,y_tol,stddy_tol,[nloop],'y',NaN);
