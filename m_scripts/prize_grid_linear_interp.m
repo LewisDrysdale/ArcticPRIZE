@@ -2,7 +2,7 @@ function [data]=prize_grid_linear_interp(structure,plot_dir,mooring,t_interp,z_i
 
 %% interpolate on to time grid
 % initialise empty arrays for grid
-T=[];S=[];PRES_T=[];PRES_S=[];
+T=[];T_sbe=[];S_sbe=[];PRES_so=[];PRES_sbe=[];
 
 % make time_grid
 t_grid = start_date:t_interp:end_date;
@@ -29,16 +29,18 @@ for ii=1:numel(structure)
         print(gcf,'-dpng',savename);       
         
         % interpolate salinity data
-        S=[S;interp1(time, sal, t_grid)];
-        PRES_S=[PRES_S;interp1(time, pres, t_grid)];
+        S_sbe=[S_sbe;interp1(time, sal, t_grid)];
+        T_sbe=[T_sbe;interp1(time, temp, t_grid)];
+        PRES_sbe=[PRES_sbe;interp1(time, pres, t_grid)];
     else
         % Star-Odi data, has tempertaure only
         % interpolate temp, no despike
         T=[T;interp1(time, temp, t_grid)];
-        PRES_T=[PRES_T; repmat(pres,1,numel(t_grid))];
+        PRES_so=[PRES_so; repmat(pres,1,numel(t_grid))];
     end
 
 end
+
 %% low-pass filter the data
 
 t_res    = diff(t_grid(1:2));   % get temporal resolution of new grid
@@ -46,33 +48,33 @@ co       = 1/2;                 % filter cut off frequency [1/days]
 fss      = 2;                   % final sub-sampling frequency [1/days]
 
 % filter Temperature
-for jj = 1:numel(PRES_T(:,1))
+for jj = 1:numel(PRES_so(:,1))
     t_nan = find(~isnan(T(jj,:)));
-    p_nan = find(~isnan(PRES_T(jj,:)));
+    p_nan = find(~isnan(PRES_so(jj,:)));
     Tf(jj,t_nan) = auto_filt(T(jj,t_nan),1/t_res,co);    
     % interpolate on to original grid
     Tf(jj,:)     = interp1(t_grid(t_nan),Tf(jj,t_nan)',t_grid)';
 end
 
 % filter Salinity
-for jj = 1:numel(PRES_S(:,1))
-    s_nan = find(~isnan(S(jj,:)));
-    p_nan = find(~isnan(PRES_S(jj,:)));
-    Sf(jj,s_nan) = auto_filt(S(jj,s_nan),1/t_res,co);    
+for jj = 1:numel(PRES_sbe(:,1))
+    s_nan = find(~isnan(S_sbe(jj,:)));
+    p_nan = find(~isnan(PRES_sbe(jj,:)));
+    Sf(jj,s_nan) = auto_filt(S_sbe(jj,s_nan),1/t_res,co);    
     % interpolate on to original grid
     Sf(jj,:)     = interp1(t_grid(s_nan),Sf(jj,s_nan)',t_grid)';
 end
 
 % Filter pressue
-for jj = 1:numel(PRES_S(:,1))
-    p_nan = find(~isnan(PRES_S(jj,:)));
-    Pfs(jj,p_nan) = auto_filt(PRES_S(jj,p_nan),1/t_res,co);    
+for jj = 1:numel(PRES_sbe(:,1))
+    p_nan = find(~isnan(PRES_sbe(jj,:)));
+    Pfs(jj,p_nan) = auto_filt(PRES_sbe(jj,p_nan),1/t_res,co);    
     % interpolate on to original grid
     Pfs(jj,:)     = interp1(t_grid(p_nan),Pfs(jj,p_nan)',t_grid)';
 end
 
 % no filter neccessary for star-odi data as pressure not sampled
-Pf  = PRES_T;
+Pf  = PRES_so;
     
 % create new time grid
 tgd   = start_date+2:1/fss:end_date-2;
@@ -104,24 +106,25 @@ for ijj=1:length(tgd)
 end
 
 %% store the data
-data.temp_filtered=Tft;
-data.sal_filtered=Sfs;
-data.pres_sto_filt=Pft;
-data.pres_sbe_filt=Pfs;
-data.temp_filtered_interpolated=TGfs;
-data.sal_filtered_interpolated=SGfs;
-data.pres_grid_temp=p_grid_t;
-data.pres_grid_sal=p_grid_s;
-data.temp=T;
-data.sal=S;
-data.pres_sal=PRES_S;
-data.depth_t=PRES_T;
-data.time_grid=t_grid;
+data.temp_filtered              =Tft; % filtered interpolated temperatures
+data.sal_filtered               =Sfs; % filtered interpolated salinity
+data.pres_sto_filt              =Pft; % 
+data.pres_sbe_filt              =Pfs;
+data.temp_filtered_interpolated =TGfs;
+data.sal_filtered_interpolated  =SGfs;
+data.pres_grid_temp             =p_grid_t;
+data.pres_grid_sal              =p_grid_s;
+data.temp_sto                   =T;
+data.sal_sbe                    =S_sbe;
+data.temp_sbe                   =T_sbe;
+data.pres_sbe                   =PRES_sbe;
+data.depth_sto                  =PRES_so;
+data.time_grid                  =t_grid;
 
 %% plot the salinity data 
-clf;figure(1);
+figure(1);
 ax(1)=subplot(3,1,1);
-[c,h]=contourf(S);
+[c,h]=contourf(S_sbe);
 axis ij
 cmocean('haline')
 colorbar
@@ -147,7 +150,7 @@ print(gcf, '-dpng',savename);
 
 
 %% plot the temperature data 
-clf;figure(2);
+figure(2);
 ax(1)=subplot(3,1,1)
 [c,h]=contourf(T);
 axis ij
