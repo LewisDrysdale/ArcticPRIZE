@@ -5,5 +5,5 @@
 /plots
 
 # ignore all word and excel docs
-.docx
-.xlsx
+*.docx
+*.xlsx
