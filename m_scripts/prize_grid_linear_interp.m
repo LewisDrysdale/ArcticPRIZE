@@ -17,10 +17,10 @@ for ii=1:numel(structure)
         
     %   Try despike salinity, replace bad values with NAN - SBE only!
     if ~isempty(sal)    
-        [sal,dx,~] = ddspike(sal,y_tol,stddy_tol,[nloop],'y',NaN);
+%         [sal,dx,~] = ddspike(sal,y_tol,stddy_tol,[nloop],'y',NaN);
         
         % Replace contemperaneous temperatures with NAN
-        temp(dx)         = NaN;
+%         temp(dx)         = NaN;
         
         % save de-spike plots
         ylabel('Salinity');
