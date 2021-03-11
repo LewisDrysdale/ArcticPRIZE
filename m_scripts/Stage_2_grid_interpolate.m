@@ -21,7 +21,7 @@ plot_dir = 'C:\Users\sa01ld\Desktop\PRIZE_18_19\plots';
 
 %% SET PARAMS FOR GRIDDING AND FILTERING
 t_interp    = 1/2; % every 6 hours
-z_interp    = 10;   % every 2 metres
+z_interp    = 10;   % every 10 metres
 y_tol       = [-10 10];    % deviation in PSU allowed by depsike routine
 stddy_tol   = 4;           % tolerance range of differences between adjacent values of y
 nloop       = 5;           % despike loop number
