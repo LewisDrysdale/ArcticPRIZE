@@ -3,3 +3,7 @@
 
 #ignore all plots
 /plots
+
+# ignore all word and excel docs
+*.docx
+*.xlsx
