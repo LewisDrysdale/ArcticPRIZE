@@ -35,7 +35,7 @@ xlabel('Time')
 datetick('x')
 legend([h1 h2 h3 h4 h5],'SBE16 21 m','SBE37 75 m','SBE37 112 m','SBE37 162 m','SBE37 222 m')
 
-print(gcf,'../T_S_lineplot_west17.png')
+print(gcf,'-dpng','../plots/T_S_lineplot_west17.png')
 
 
 figure; % ts plot
@@ -60,4 +60,4 @@ legend([h1 h2 h3 h4 h5],'SBE16 21 m','SBE37 75 m',...
     'SBE37 112 m','SBE37 162 m','SBE37 222 m',...
     'Location','northwest')
 
-print(gcf,'../T_S_west17.png')
+print(gcf,'-dpng','../plots/T_S_west17.png')

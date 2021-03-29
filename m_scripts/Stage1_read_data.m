@@ -12,7 +12,7 @@ clear; close('all');
 %% set dirs
 outdir  =('C:\Users\sa01ld\Desktop\PRIZE_18_19\data\moor_processed');
 indir   =('C:\Users\sa01ld\Desktop\PRIZE_18_19\data\moor_raw'); 
-mooring_id='EAST_17';
+mooring_id='WEST_17';
 
 %% start reading data
 
