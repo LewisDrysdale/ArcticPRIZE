@@ -25,7 +25,7 @@ z_interp    = 10;   % every 10 metres
 y_tol       = [-10 10];    % deviation in PSU allowed by depsike routine
 stddy_tol   = 4;           % tolerance range of differences between adjacent values of y
 nloop       = 5;           % despike loop number
-mooring_id  = 'WEST_17';
+mooring_id  = 'EAST_17';
 
 %% BEGIN DATA PROCESSING
 switch mooring_id
