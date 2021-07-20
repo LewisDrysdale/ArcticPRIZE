@@ -9,13 +9,11 @@ h2=plot(prize_west_17_gridded.time_grid,prize_west_17_gridded.sal(7,:))
 hold on
 h3=plot(prize_west_17_gridded.time_grid,prize_west_17_gridded.sal(9,:))
 hold on
-h4=plot(prize_west_17_gridded.time_grid,prize_west_17_gridded.sal(11,:))
-hold on
-h5=plot(prize_west_17_gridded.time_grid,prize_west_17_gridded.sal(14,:))
+h4=plot(prize_west_17_gridded.time_grid,prize_west_17_gridded.sal(12,:))
 ylabel('Salinity (PSU)')
 xlabel('Time')
 datetick('x')
-legend([h1 h2 h3 h4 h5],'SBE16 21 m','SBE37 75 m',...
+legend([h1 h2 h3 h4],'SBE16 21 m',...
     'SBE37 112 m','SBE37 162 m','SBE37 222 m',...
     'Location','southeast')
 
@@ -27,13 +25,11 @@ h2=plot(prize_west_17_gridded.time_grid,prize_west_17_gridded.temp(7,:))
 hold on
 h3=plot(prize_west_17_gridded.time_grid,prize_west_17_gridded.temp(9,:))
 hold on
-h4=plot(prize_west_17_gridded.time_grid,prize_west_17_gridded.temp(11,:))
-hold on
-h5=plot(prize_west_17_gridded.time_grid,prize_west_17_gridded.temp(14,:))
+h4=plot(prize_west_17_gridded.time_grid,prize_west_17_gridded.temp(12,:))
 ylabel('Temperature (deg C)')
 xlabel('Time')
 datetick('x')
-legend([h1 h2 h3 h4 h5],'SBE16 21 m','SBE37 75 m','SBE37 112 m','SBE37 162 m','SBE37 222 m')
+legend([h1 h2 h3 h4],'SBE16 21 m','SBE37 112 m','SBE37 162 m','SBE37 222 m')
 
 print(gcf,'-dpng','../plots/T_S_lineplot_west17.png')
 
@@ -50,13 +46,11 @@ h2=plot(prize_west_17_gridded.sal(7,:),prize_west_17_gridded.temp(7,:),'.')
 hold on
 h3=plot(prize_west_17_gridded.sal(9,:),prize_west_17_gridded.temp(9,:),'.')
 hold on
-h4=plot(prize_west_17_gridded.sal(11,:),prize_west_17_gridded.temp(11,:),'.')
-hold on
-h5=plot(prize_west_17_gridded.sal(14,:),prize_west_17_gridded.temp(14,:),'.')
+h4=plot(prize_west_17_gridded.sal(11,:),prize_west_17_gridded.temp(12,:),'.')
 ylabel('Temperature (deg C)')
 xlabel('Salinity (PSU)')
 
-legend([h1 h2 h3 h4 h5],'SBE16 21 m','SBE37 75 m',...
+legend([h1 h2 h3 h4 ],'SBE16 21 m',...
     'SBE37 112 m','SBE37 162 m','SBE37 222 m',...
     'Location','northwest')
 

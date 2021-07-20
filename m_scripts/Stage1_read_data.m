@@ -13,7 +13,7 @@ clear; close('all');
 outdir  =('C:\Users\sa01ld\Desktop\PRIZE_18_19\data\moor_processed');
 indir   =('C:\Users\sa01ld\Desktop\PRIZE_18_19\data\moor_raw'); 
 mooring_id='WEST_17';
-
+count=0;
 %% start reading data
 
 switch mooring_id
@@ -25,17 +25,19 @@ switch mooring_id
     end_date=datenum('17-Jun-2018 05:00:00'); 
     waterdepth = 233; %TBC 255 ctd033 228
     inst_list = [50215,9381,4203,4205,4206,4207,4208,9382,4209,4210,9388,4211,4213,4302,9389];
-    inst_depth_list = [21,22,27,31,41,51,51,75,83,96,110,125,140,155,170];
+    inst_depth_list = [21,22,27,31,41,51,61,75,83,96,110,125,140,155,170];
     EAST_SBE16_SN = [50215];
     EAST_SBE37_SN = [9381,9382,9388,9389];
     EAST_SO_SN = [4203,4205,4206,4207,4208,4209,4210,4211,4213,4302];
+    
     
     for j=1:length(inst_list)
         if ismember(inst_list(j),EAST_SBE37_SN)
            fl = [indir filesep '2017/east' filesep 'SBE37SM-RS232_0370' num2str(inst_list(j)) '_2018_06_17postcal.cnv'];
             if ~exist(fl,'file')
-                disp(['WARNING: file for instrment ' num2str(inst_list(j)) ' not found!!'])
+                disp(['WARNING: file for instrument ' num2str(inst_list(j)) ' not found!!'])
             else
+                count=count+1;
                 [timeJ,pres,temp,cond,depth,sal,sv,dens,flag]=textread(fl,...
                 '%f%f%f%f%f%f%f%f%f','headerlines',300);
                 % Select in-water data only
@@ -44,40 +46,47 @@ switch mooring_id
                 sz=size(temp);
                 if sz(2)==1; temp=temp'; sal=sal'; pres=pres'; dens=dens'; cond=cond'; end
 
-                prize_east_17(j).inst='SBE-37';
-                prize_east_17(j).sn=inst_list(j);
-                prize_east_17(j).time=mtime(ind);
-                prize_east_17(j).pres=pres(ind);
-                prize_east_17(j).temp=temp(ind);
-                prize_east_17(j).cond=cond(ind);
-                prize_east_17(j).sal=sal(ind);
-                prize_east_17(j).dens=dens(ind);
+                prize_east_17(count).inst='SBE-37';
+                prize_east_17(count).sn=inst_list(j);
+                prize_east_17(count).time=mtime(ind);
+                prize_east_17(count).pres=pres(ind);
+                prize_east_17(count).temp=temp(ind);
+                prize_east_17(count).cond=cond(ind);
+                prize_east_17(count).sal=sal(ind);
+                prize_east_17(count).dens=dens(ind);
                 clear scan timeJ pres temp cond depth sal dens flag mtime ind sn fl   
             end
        elseif ismember(inst_list(j),EAST_SBE16_SN) % sbe16
              fl = [indir filesep '2017/east' filesep 'SBE16plus_016' num2str(inst_list(j)) '_2018_06_17.cnv'];
                 if ~exist(fl,'file')
                     disp(['WARNING: file for instrment ' num2str(inst_list(j)) ' not found!!'])
-                else            [pres,timeJ,temp,cond,sal,volt,flag]=textread(fl,...
+                else
+                    count=count+1;
+                    [pres,timeJ,temp,cond,sal,volt,flag]=textread(fl,...
                                 '%f%f%f%f%f%f%f','headerlines',501);
                 % Select in-water data only
                 mtime=datenum('31-Dec-2016 00:00:00')+timeJ;
                 ind=find(mtime>=start_date & mtime<=end_date);
                  sz=size(temp);
                     if sz(2)==1; temp=temp'; sal=sal'; pres=pres'; cond=cond'; end            
-                    prize_east_17(j).inst='SBE-16';
-                    prize_east_17(j).sn=inst_list(j);
-                    prize_east_17(j).time=mtime(ind);
-                    prize_east_17(j).pres=pres(ind);
-                    prize_east_17(j).temp=temp(ind);
-                    prize_east_17(j).cond=cond(ind);
-                    prize_east_17(j).sal=sal(ind);
+                    prize_east_17(count).inst='SBE-16';
+                    prize_east_17(count).sn=inst_list(j);
+                    prize_east_17(count).time=mtime(ind);
+                    prize_east_17(count).pres=pres(ind);
+                    prize_east_17(count).temp=temp(ind);
+                    prize_east_17(count).cond=cond(ind);
+                    prize_east_17(count).sal=sal(ind);
                     clear scan timeJ pres temp cond depth sal dens flag mtime ind sn fl
                end
         else
-            if ~exist(fl,'file')
+            sodir = [indir filesep '2017/east'];
+            inst=num2str(inst_list(j));
+            infile = dir(sprintf(['%s%c*' inst '.dat'],sodir,filesep));
+            if isempty(infile)                
                 disp(['WARNING: file for instrment ' num2str(inst_list(j)) ' not found!!'])
             else
+                count=count+1;
+             fl=fullfile(infile.folder, infile.name);
             [scan,datetime,T]=textread(fl,'%f%19c%s','delimiter',' ','headerlines',13);
                 for ii=1:numel(T)
                     split_temp=split(T(ii),',');
@@ -89,18 +98,17 @@ switch mooring_id
             
             mtime=datenum(datetime,'dd.mm.yyyy HH:MM:SS');
             ind=find(mtime>=start_date & mtime<=end_date);
-            prize_east_17(j).inst='Star-Odi';
-            prize_east_17(j).sn=inst_list(j);
-            prize_east_17(j).time=mtime(ind);
-            prize_east_17(j).temp=temp(ind);
-            prize_east_17(j).pres=inst_depth_list(j);
+            prize_east_17(count).inst='Star-Odi';
+            prize_east_17(count).sn=inst_list(j);
+            prize_east_17(count).time=mtime(ind);
+            prize_east_17(count).temp=temp(ind);
+            prize_east_17(count).pres=inst_depth_list(j);
             
             clear scan datetime temp mtime ind sn fl
             end
-        end
+         end
     end
  
-
     save([outdir filesep mooring_id '.mat'],'prize_east_17')
     
     case ('WEST_17')
@@ -109,8 +117,9 @@ switch mooring_id
     start_date=datenum('23-Sep-2017 12:30:00');
     end_date=datenum('14-Jun-2018 05:00:00'); 
     waterdepth = 233; %TBC 255 ctd033 228
-    inst_list = [50214,4196,4197,4198,4199,4200,9384,4201,9385,9386,9387,4216,4218,4220];
-    inst_depth_list = [21,27,31,41,51,61,75,88,96,112,162,222,137,187,212];
+    % REMOVE INSTRUMENT 9386 DUE TO BAD VALUES
+    inst_list = [50214,4196,4197,4198,4199,4200,9384,4201,9385,9387,4216,4218,4220];
+    inst_depth_list = [21,27,31,41,51,61,88,96,112,162,222,137,187,212];
     WEST_SBE16_SN = [50214];
     WEST_SBE37_SN = [9384,9385,9386,9387];
     WEST_SO_SN = [4196,4197,41981,4199,4200,4201,4215,4216,4218,4220];
