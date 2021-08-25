@@ -1,10 +1,17 @@
 # ArcticPRIZE
-code and documents associated with Arctic PRIZE moorings 2018-2019
 
-## Stage 1
+**Code for processing Arctic PRIZE moorings 2017-2108 and 2018-2019**
 
-*m_scripts/Stage1_read_data.m* reads instrument data from each mooring and orgainises in to structure
+## Step 1
 
-## Stage 2
+***m_scripts/Stage1_read_data.m***
+- Reads instrument data from each mooring
+- Output to Matlab structure and individual CSV files
+- Plots stacked data
 
-*m_scripts/Stage_2_grid_interpolate.m* reads .mat file produced by stage 1 then de-spikes data, interpolates, and filters
+## Step 2
+
+***Stage_2_grid_interpolate.m***
+- reads .mat file produced by stage 1
+- Uses ***prize_grid_linear_interp*** to de-spike, grid, and filter data
+- Outputs to Matlab stucture
