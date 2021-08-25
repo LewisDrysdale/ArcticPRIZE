@@ -1,19 +1,25 @@
-%% Create data product for PRIZE mooring
-% _*Authors: Emily Venables and Estelle Dumont, 2019; Lewis Drysdale, 2020*_ 
-
+% Create array for CTD data for PRIZE WEST mooring 2017-18
+% script written by Emily and Estelle (?) for reading prize mooriong data,
+% edited by Lewis
+% 
+% 
+% 
+% 
+% 
+% The naming conventions for files are not consistent (e.g. 2017-2108 data
+% has _2018_, while 2018-2019 data also has _2019))
 clear; close('all');
-%% Set dirs and mooring ID
-
-outdir  =('M:\Mar_Phys\Moorings\PRIZE moorings\PRIZE_18_19\DATA\moor_processed');
-indir   =('M:\Mar_Phys\Moorings\PRIZE moorings\PRIZE_18_19\DATA\moor_raw'); 
+%% set dirs
+outdir  =('C:\Users\sa01ld\Desktop\PRIZE_18_19\data\moor_processed');
+indir   =('C:\Users\sa01ld\Desktop\PRIZE_18_19\data\moor_raw'); 
 mooring_id='WEST_17';
 count=0;
-%% Read data
+%% start reading data
 
-switch mooring_id  
-% Eastern array 2017-2018
+switch mooring_id
 
-    case ('EAST_17')        
+    case ('EAST_17')
+        
     % set mooring parameters here
     start_date=datenum('21-Sep-2017 12:30:00');
     end_date=datenum('17-Jun-2018 05:00:00'); 
@@ -23,7 +29,8 @@ switch mooring_id
     EAST_SBE16_SN = [50215];
     EAST_SBE37_SN = [9381,9382,9388,9389];
     EAST_SO_SN = [4203,4205,4206,4207,4208,4209,4210,4211,4213,4302];
-       
+    
+    
     for j=1:length(inst_list)
         if ismember(inst_list(j),EAST_SBE37_SN)
            fl = [indir filesep '2017/east' filesep 'SBE37SM-RS232_0370' num2str(inst_list(j)) '_2018_06_17postcal.cnv'];
@@ -103,10 +110,7 @@ switch mooring_id
     end
  
     save([outdir filesep mooring_id '.mat'],'prize_east_17')
- 
-% Western array 2017-2018
-
-   
+    
     case ('WEST_17')
         
     % set mooring parameters here
@@ -181,8 +185,6 @@ switch mooring_id
     end
 
     save([outdir filesep mooring_id '.mat'],'prize_west_17')
-% Western array 2018-2019
-
     
     case ('WEST_18')
     % set mooring parameters here
@@ -234,8 +236,6 @@ switch mooring_id
     end
 
     save([outdir filesep mooring_id '.mat'],'prize_west_18')
-% Eastern array 2018-2019
-
     
     case ('EAST_18') % EAST 2018 data
      
@@ -249,10 +249,11 @@ switch mooring_id
     % include SBE16 in generic SBE instrument list (to include in salinity
     % plots later
     EAST_SBE_SN=[50214 EAST_SBE37_SN];
+    %% Read data into stucture
     for j=1:length(inst_list)
          if ismember(inst_list(j),EAST_SBE37_SN) % SBE 37
             fl = [indir filesep '2018' filesep 'EAST18_SBE37_' num2str(inst_list(j)) '.cnv'];
-            [~,timeJ,pres,temp,cond,depth,sal,dens,flag]=textread(fl,...
+            [scan,timeJ,pres,temp,cond,depth,sal,dens,flag]=textread(fl,...
                 '%f%f%f%f%f%f%f%f%f','headerlines',293);
             % Select in-water data only
             mtime=datenum('31-Dec-2017 00:00:00')+timeJ;
@@ -271,7 +272,7 @@ switch mooring_id
              sz=size(temp);
          elseif ismember(inst_list(j),EAST_SBE_SN) % sbe16
              fl = [indir filesep '2018' filesep 'EAST18_SBE16_' num2str(inst_list(j)) '.txt'];
-            [~,timeJ,pres,temp,cond,depth,sal,dens,fluo,par,flag]=textread(fl,...
+            [scan,timeJ,pres,temp,cond,depth,sal,dens,fluo,par,flag]=textread(fl,...
                  '%f%f%f%f%f%f%f%f%f%f%f','headerlines',20);
              % Select in-water data only
             mtime=datenum('31-Dec-2017 00:00:00')+timeJ;
@@ -292,7 +293,7 @@ switch mooring_id
              sz=size(temp);
          else % STAR-ODI
             fl = [indir filesep  '2018' filesep 'T' num2str(inst_list(j)) '.DAT'];
-            [~,datetime,temp]=textread(fl,'%f%19c%f','delimiter',' ','headerlines',12);
+            [scan,datetime,temp]=textread(fl,'%f%19c%f','delimiter',' ','headerlines',12);
             mtime=datenum(datetime,'dd.mm.yyyy HH:MM:SS');  
             ind=find(mtime>=start_date & mtime<=end_date);
             if sz(2)==1; temp=temp';  end
@@ -305,18 +306,4 @@ switch mooring_id
          end
     end
     save([outdir filesep mooring_id '.mat'],'prize_east_18')
-end
-
-% Check plots
-
-if strcmpi(mooring_id,'WEST_17')==1
-    data=prize_west_17;
-elseif strcmpi(mooring_id,'EAST_17')==1
-    data=prize_east_17;
-elseif strcmpi(mooring_id,'WEST_18')==1
-    data=prize_west_18;
-elseif strcmpi(mooring_id,'EAST_18')==1
-    data=prize_east_18;
-else
-    disp('No data to plot!')
 end

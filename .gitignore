@@ -3,7 +3,12 @@
 
 #ignore all plots
 /plots
+*.png
+*.fig
 
 # ignore all word and excel docs
 *.docx
 *.xlsx
+*.csv
+*.txt
+

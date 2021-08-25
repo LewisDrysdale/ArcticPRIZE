@@ -46,22 +46,39 @@ switch mooring_id
         [prize_west_17_gridded]=prize_grid_linear_interp(prize_west_17,plot_dir,mooring_id,t_interp,z_interp,start_date,end_date,y_tol,stddy_tol,nloop)
         % SAVE data structure
         save([data_dir filesep mooring_id '.mat'],'prize_west_17_gridded','prize_west_17');
+        
+    case 'EAST_17'
 
+        start_date  = datenum('21-Sep-2017');
+        end_date    = datenum('17-Jun-2018');
+
+        % make dir in plot folder
+        if ~exist([plot_dir filesep mooring_id],'dir')==1
+            mkdir([plot_dir filesep mooring_id])
+        end
+
+        % load data structure
+        load([data_dir filesep mooring_id '.mat']);
+
+        [prize_east_17_gridded]=prize_grid_linear_interp(prize_east_17,plot_dir,mooring_id,t_interp,z_interp,start_date,end_date,y_tol,stddy_tol,nloop)
+        % SAVE data structure
+        save([data_dir filesep mooring_id '.mat'],'prize_east_17_gridded','prize_east_17');
+        
     case 'EAST_18'
 
         start_date  = datenum('21-June-2018');
         end_date    = datenum('17-Nov-2019');
         % make dir in plot folder
-        if ~exist([plot_dir filesep mooring],'dir')==1
-            mkdir([plot_dir filesep mooring])
+        if ~exist([plot_dir filesep mooring_id],'dir')==1
+            mkdir([plot_dir filesep mooring_id])
         end
 
         % load data structure
-        load([data_dir filesep mooring '.mat']);
+        load([data_dir filesep mooring_id '.mat']);
 
-        [prize_east_18_gridded]=prize_grid_linear_interp(prize_east_18,plot_dir,mooring,t_interp,z_interp,start_date,end_date,y_tol,stddy_tol,nloop)
+        [prize_east_18_gridded]=prize_grid_linear_interp(prize_east_18,plot_dir,mooring_id,t_interp,z_interp,start_date,end_date,y_tol,stddy_tol,nloop)
         % SAVE data structure
-        save([data_dir filesep mooring '.mat'],'prize_east_18_gridded','prize_east_18');
+        save([data_dir filesep mooring_id '.mat'],'prize_east_18_gridded','prize_east_18');
 
     case 'WEST_18'
 
@@ -69,14 +86,14 @@ switch mooring_id
         end_date    = datenum('17-Nov-2019');
 
         % make dir in plot folder
-        if ~exist([plot_dir filesep mooring],'dir')==1
-            mkdir([plot_dir filesep mooring])
+        if ~exist([plot_dir filesep mooring_id],'dir')==1
+            mkdir([plot_dir filesep mooring_id])
         end
 
         % load data structure
-        load([data_dir filesep mooring '.mat']);
+        load([data_dir filesep mooring_id '.mat']);
 
-        [prize_west_18_gridded]=prize_grid_linear_interp(prize_west_18,plot_dir,mooring,t_interp,z_interp,start_date,end_date,y_tol,stddy_tol,nloop)
+        [prize_west_18_gridded]=prize_grid_linear_interp(prize_west_18,plot_dir,mooring_id,t_interp,z_interp,start_date,end_date,y_tol,stddy_tol,nloop)
         % SAVE data structure
-        save([data_dir filesep mooring '.mat'],'prize_west_18_gridded','prize_west_18');
+        save([data_dir filesep mooring_id '.mat'],'prize_west_18_gridded','prize_west_18');
 end
