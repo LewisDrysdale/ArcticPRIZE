@@ -6,9 +6,10 @@
 *.png
 *.fig
 
-# ignore all word and excel docs
+# ignore all word and excel docs and ascii files
 *.docx
 *.xlsx
 *.csv
 *.txt
+*.bin
 
